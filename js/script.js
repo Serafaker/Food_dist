@@ -251,35 +251,49 @@ showTabContent();
             
             form.insertAdjacentElement("afterend", statusMessage);
 
-            const request = new XMLHttpRequest();
-
-            request.open('POST', 'server.php');      //настраиваем запрос
-
-            // request.setRequestHeader("Content-type", 'multipart/form-data'); если используется xmlhttpRequest c  formData то именовать запрос не надо!!!!!!
-            request.setRequestHeader("Content-type", 'application/json');
-            const formData= new FormData(form);
-
-            const object= {};
-            formData.forEach(function(value, key){
-                object[key]= value;
-            });
-
-        const json= JSON.stringify(object);
             
 
-            request.send(json);
-            request.addEventListener("load", ()=>{
-                if(request.status===200){
-                    console.log(request.response);
-                    showThanksModal(message.success);
-                    form.reset();
-                    statusMessage.remove();
-                    
-                }else{
-                    showThanksModal(message.failure);
-                }
-            });
+            // request.setRequestHeader("Content-type", 'multipart/form-data'); если используется xmlhttpRequest c  formData то именовать запрос не надо!!!!!!
+          
+            const formData= new FormData(form);
 
+        //     const object= {};
+        //     formData.forEach(function(value, key){
+        //         object[key]= value;
+        //     });
+
+        // const json= JSON.stringify(object);
+            
+
+        fetch('server.php',{
+            method: "POST",
+            body: formData
+        }).then(data=>data.text()
+        ).then(data =>{
+            console.log(data);
+            showThanksModal(message.success);
+            
+            statusMessage.remove();
+        }).catch(()=>{
+            showThanksModal(message.failure);
+        }).finally(()=>{
+            form.reset();
+        });
+
+            // request.addEventListener("load", ()=>{
+            //     if(request.status===200){
+            //         console.log(request.response);
+            //         showThanksModal(message.success);
+            //         form.reset();
+            //         statusMessage.remove();
+                    
+            //     }else{
+            //         showThanksModal(message.failure);
+            //     }
+            // });
+            // headers: {
+            //     "Content-type":'application/json'
+            // },
         });
     }
     
@@ -306,4 +320,6 @@ showTabContent();
             closeModal();
         }, 4000);
     }
+
+    
 });
